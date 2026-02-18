@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "56561787294",
+    "firebase_url": "https://desafio-chat-flutter-default-rtdb.firebaseio.com",
+    "project_id": "desafio-chat-flutter",
+    "storage_bucket": "desafio-chat-flutter.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:56561787294:android:9de2049e845db50d6bb68f",
+        "android_client_info": {
+          "package_name": "com.example.desafio_chat_flutter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDsavfhfAJJEhFo9_5z4cM6y22sjc0kKoo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
