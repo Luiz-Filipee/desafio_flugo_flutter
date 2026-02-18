@@ -1,49 +1,147 @@
-
-import 'package:desafio_chat_flutter/pages/chat/chat_page.dart';
 import 'package:desafio_chat_flutter/services/auth_service.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final controller = TextEditingController();
-  final auth = AuthService();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final _auth = AuthService();
 
-  void login() async {
-    if (controller.text.isEmpty) return;
-    
-    await auth.login(controller.text);
-    
-    Navigator.pushReplacement(
-      context, 
-      MaterialPageRoute(builder: (_) => ChatPage())
-    );
+  bool isLogin = true;
+  bool loading = false;
+
+  Future<void> submit() async {
+    setState(() => loading = true);
+
+    try {
+      if (isLogin) {
+        await _auth.login(
+          emailController.text.trim(),
+          passwordController.text.trim(),
+        );
+      } else {
+        await _auth.register(
+          emailController.text.trim(),
+          passwordController.text.trim(),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    }
+
+    setState(() => loading = false);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: controller,
-              decoration: InputDecoration(
-                labelText: 'Digite seu nome',
-                border: OutlineInputBorder(),
-              ),
+      backgroundColor: Colors.grey[100],
+      body: Center(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              children: [
+                Image.asset(
+                  'assets/images/logo.png',
+                  height: 120,
+                ),
+                const SizedBox(height: 32),
+
+                Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  elevation: 8,
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      children: [
+                        Text(
+                          isLogin ? 'Entrar' : 'Criar Conta',
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF27AE60),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+
+                        TextField(
+                          controller: emailController,
+                          decoration: InputDecoration(
+                            labelText: 'Email',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+
+                        TextField(
+                          controller: passwordController,
+                          obscureText: true,
+                          decoration: InputDecoration(
+                            labelText: 'Senha',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+
+                        SizedBox(
+                          width: double.infinity,
+                          height: 48,
+                          child: ElevatedButton(
+                            onPressed: loading ? null : submit,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF2ECC71),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: loading
+                                ? const CircularProgressIndicator(
+                                    color: Colors.white,
+                                  )
+                                : Text(
+                                    isLogin ? 'Entrar' : 'Cadastrar',
+                                    style: const TextStyle(fontSize: 16),
+                                  ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 12),
+
+                        TextButton(
+                          onPressed: () {
+                            setState(() => isLogin = !isLogin);
+                          },
+                          child: Text(
+                            isLogin
+                                ? 'Não tem conta? Cadastre-se'
+                                : 'Já tem conta? Entrar',
+                            style: const TextStyle(
+                              color: Color(0xFF27AE60),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
-            SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: login,
-              child: Text('Entrar'),
-            ),
-          ],
+          ),
         ),
       ),
     );

@@ -1,105 +1,194 @@
-
-import 'package:desafio_chat_flutter/models/message_model.dart';
-import 'package:desafio_chat_flutter/services/chat_service.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ChatPage extends StatefulWidget {
+  const ChatPage({super.key});
+
   @override
   State<ChatPage> createState() => _ChatPageState();
 }
 
 class _ChatPageState extends State<ChatPage> {
-  final chatService = ChatService();
-  final controller = TextEditingController();
-  final user = FirebaseAuth.instance.currentUser;
+  final DatabaseReference messagesRef =
+    FirebaseDatabase.instance.ref('messages');
 
-  void enviar() async {
-    if (controller.text.isEmpty) return;
+  final TextEditingController messageController =
+    TextEditingController();
+  final ScrollController scrollController = ScrollController();
 
-    final mensagem = MessageModel(
-      texto: controller.text,
-      userName: user?.displayName ?? 'Anônimo',
-      userId: user?.uid ?? '',
-      timestamp: DateTime.now(),
-    );
+  void sendMessage() {
+    if (messageController.text.trim().isEmpty) return;
 
-    chatService.enviaMensagem(mensagem);
-    controller.clear();
+    messagesRef.push().set({
+      'user': FirebaseAuth.instance.currentUser!.email,
+      'text': messageController.text.trim(),
+      'createdAt': DateTime.now().millisecondsSinceEpoch,
+    });
+
+    messageController.clear();
   }
-  
+
+  void scrollToBottom() {
+    Future.delayed(const Duration(milliseconds: 300), () {
+      scrollController.animateTo(
+        scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final currentUser = FirebaseAuth.instance.currentUser!.email;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Chat Geral')),
+      backgroundColor: Colors.grey[100],
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF2ECC71),
+        title: const Text('Chat Geral', style: TextStyle(color: Colors.white)),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            color: Colors.white,
+            icon: const Icon(Icons.logout),
+            onPressed: () => FirebaseAuth.instance.signOut(),
+          )
+        ],
+      ),
       body: Column(
         children: [
           Expanded(
             child: StreamBuilder(
-              stream: chatService.getMensagens(),
+              stream: messagesRef.onValue,
               builder: (context, snapshot) {
-                if (!snapshot.hasData) return const SizedBox();
+                if (!snapshot.hasData ||
+                  snapshot.data!.snapshot.value == null) {
+                  return const Center(
+                    child: Text('Nenhuma mensagem')
+                  );
+                }
 
-                final data = snapshot.data!.snapshot.value as Map?;
-                if (data == null) return const SizedBox();
+                final data = Map<dynamic, dynamic>.from(
+                  snapshot.data!.snapshot.value as Map);
 
-                final messages = data.entries.map((e) {
-                  return MessageModel.fromMap(e.value);
-                }).toList();
+                final messages = data.entries.toList()
+                  ..sort((a, b) {
+                    final aTime = a.value['createdAt'] ?? 0;
+                    final bTime = b.value['createdAt'] ?? 0;
+                    return aTime.compareTo(bTime);
+                  });
 
-                return ListView(
-                  reverse: false,
-                  children: messages.map((m) {
-                    final isMe = m.userId == user!.uid;
+
+                scrollToBottom();
+
+                return ListView.builder(
+                  controller: scrollController,
+                  itemCount: messages.length,
+                  itemBuilder: (context, index) {
+                    final msg = messages[index].value;
+                    final isMe = msg['user'] == currentUser;
+
+                    final time = DateTime
+                      .fromMillisecondsSinceEpoch(
+                        msg['createdAt']);
+
                     return Align(
-                      alignment:
-                        isMe ? Alignment.centerRight : Alignment.centerLeft,
+                      alignment: isMe
+                        ? Alignment.centerRight
+                        : Alignment.centerLeft,
                       child: Container(
-                        margin: const EdgeInsets.all(8),
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 6),
                         padding: const EdgeInsets.all(12),
+                        constraints: const BoxConstraints(
+                          maxWidth: 280),
                         decoration: BoxDecoration(
-                          color: isMe ? Colors.green[200] : Colors.grey[300],
-                          borderRadius: BorderRadius.circular(12),
+                          color: isMe
+                            ? const Color(0xFF2ECC71)
+                            : Colors.white,
+                          borderRadius:
+                            BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 4,
+                            )
+                          ],
                         ),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment:
+                              CrossAxisAlignment.start,
                           children: [
                             Text(
-                              m.userName,
-                              style: const TextStyle(
+                              msg['user'],
+                              style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 12,
+                                color: isMe
+                                  ? Colors.white
+                                  : Colors.black87,
                               ),
                             ),
-                            Text(m.texto),
+                            const SizedBox(height: 4),
+                            Text(
+                              msg['text'],
+                              style: TextStyle(
+                                color: isMe
+                                  ? Colors.white
+                                  : Colors.black87,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Align(
+                              alignment:
+                                  Alignment.bottomRight,
+                              child: Text(
+                                '${time.hour}:${time.minute.toString().padLeft(2, '0')}',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: isMe
+                                    ? Colors.white70
+                                    : Colors.grey,
+                                ),
+                              ),
+                            )
                           ],
                         ),
                       ),
                     );
-                  }).toList(),
+                  },
                 );
               },
             ),
           ),
 
-          Padding(
-            padding: const EdgeInsets.all(8),
+          Container(
+            padding: const EdgeInsets.all(12),
+            color: Colors.white,
             child: Row(
               children: [
                 Expanded(
                   child: TextField(
-                    controller: controller,
-                    decoration:
-                        const InputDecoration(hintText: 'Digite a mensagem'),
+                    controller: messageController,
+                    decoration: InputDecoration(
+                      hintText: 'Digite sua mensagem...',
+                      border: OutlineInputBorder(
+                        borderRadius:
+                            BorderRadius.circular(12),
+                      ),
+                    ),
                   ),
                 ),
+                const SizedBox(width: 8),
                 IconButton(
-                  icon: const Icon(Icons.send),
-                  onPressed: enviar,
+                  icon: const Icon(Icons.send,
+                      color: Color(0xFF27AE60)),
+                  onPressed: sendMessage,
                 )
               ],
             ),
-          )
+          ),
         ],
       ),
     );

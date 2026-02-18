@@ -1,31 +1,28 @@
 class MessageModel {
-  final String texto;
-  final String userName;
-  final String userId;
-  final DateTime timestamp;
+  final String user;
+  final String text;
+  final DateTime createdAt;
 
   MessageModel({
-    required this.texto,
-    required this.userName,
-    required this.userId,
-    required this.timestamp,
+    required this.user,
+    required this.text,
+    required this.createdAt,
   });
-
-  factory MessageModel.fromMap(Map data) {
-    return MessageModel(
-      texto: data['texto'],
-      userName: data['userName'],
-      userId: data['userId'],
-      timestamp: data['timestamp'],
-    );
-  }
 
   Map<String, dynamic> toMap() {
     return {
-      'texto': texto,
-      'userName': userName,
-      'userId': userId,
-      'timestamp': timestamp,
+      'user': user,
+      'text': text,
+      'createdAt': createdAt.millisecondsSinceEpoch,
     };
+  }
+
+  factory MessageModel.fromMap(Map<dynamic, dynamic> map) {
+    return MessageModel(
+      user: map['user'],
+      text: map['text'],
+      createdAt:
+          DateTime.fromMillisecondsSinceEpoch(map['createdAt']),
+    );
   }
 }
