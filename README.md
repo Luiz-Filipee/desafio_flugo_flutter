@@ -2,33 +2,31 @@
 
 ![Flutter](https://img.shields.io/badge/Flutter-%2302569B.svg?style=for-the-badge&logo=Flutter&logoColor=white)
 ![Firebase](https://img.shields.io/badge/Firebase-039BE5?style=for-the-badge&logo=Firebase&logoColor=white)
+![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS%20%7C%20Web%20%7C%20Desktop-blue)
 
-Aplicação desenvolvida em **Flutter** com foco em autenticação e chat em tempo real, estruturada seguindo boas práticas de organização, separação de responsabilidades e escalabilidade.
-
-O projeto utiliza **Firebase** para autenticação e serviços de backend, sendo compatível com Android, iOS, Web, Windows, Linux e macOS.
+Aplicação robusta desenvolvida em **Flutter** com foco em autenticação segura e comunicação em tempo real. O projeto segue padrões de arquitetura limpa, garantindo escalabilidade e facilidade de manutenção em múltiplas plataformas.
 
 ---
 
 ## 📱 Funcionalidades
 
-- 🔐 **Autenticação de usuários**
+- 🔐 Autenticação de usuários
   - Login com e-mail e senha
   - Controle de sessão autenticada
-- 💬 **Chat em tempo real**
+- 💬 Chat em tempo real
   - Envio e recebimento de mensagens
   - Modelo de mensagens estruturado
-- 🔥 **Integração com Firebase**
+- 🔥 Integração com Firebase
   - Firebase Auth
   - Firebase Core
-- 🧱 **Arquitetura organizada**
+- 🧱 Arquitetura organizada
   - Separação por camadas (pages, models, services)
-- 🌍 **Multiplataforma**
+- 🌍 Multiplataforma
   - Android, iOS, Web, Windows, Linux e macOS
 
----
+## 📁 Estrutura do Projeto
 
-## 🗂️ Estrutura de Pastas
-
+```bash
 desafio_chat_flutter/
 ├── android/                    # Configurações específicas do Android
 ├── ios/                        # Configurações específicas do iOS
@@ -57,98 +55,191 @@ desafio_chat_flutter/
 ├── analysis_options.yaml       # Regras de análise de código
 ├── flutter_plugins_dependencies
 └── pubspec.yaml                # Dependências e configurações do Flutter
+```
 
 ---
 
-🧠 Organização da Arquitetura
-📦 Models
-Responsáveis por representar os dados da aplicação.
+## 🧠 Organização da Arquitetura
 
-message_model.dart: Estrutura das mensagens do chat. Facilita a serialização e desserialização.
+* Banco: **Firestore**
+* Coleção: `colaboradores`
 
-🧩 Pages
-Contém as telas (UI) da aplicação.
+### Estrutura do documento
 
-login_page.dart: Tela de login do usuário.
+```ts
+{
+  nome: string;
+  email: string;
+  departamento: string;
+  ativo: boolean;
+  criadoEm: Timestamp;
+}
+```
 
-chat_page.dart: Interface principal do chat.
+* Banco: **Firestore**
+* Coleção: `departamentos`
 
-⚙️ Services
-Responsáveis pela lógica de negócio e comunicação com serviços externos.
+### Estrutura do documento
 
-auth_service.dart: Gerenciamento de autenticação.
+```ts
+{
+  id?: string;
+  nome: string;
+  gestorId: string;
+  gestorNome: string;
+  colaboradores: string[];
+  ativo: boolean;
+}
+```
 
-chat_service.dart: Envio e recebimento de mensagens.
+---
 
-🔥 Configuração do Firebase
-Crie um projeto no Firebase Console.
+## ▶️ Como Rodar o Projeto Localmente
 
-Adicione um app Android.
+### 1️⃣ Clonar o repositório
 
-Baixe o arquivo google-services.json.
+```bash
+git clone https://github.com/seu-usuario/flugo.git
+cd flugo
+```
 
-Coloque o arquivo em: android/app/google-services.json
+### 2️⃣ Instalar dependências
 
-Gere o arquivo firebase_options.dart utilizando:
+```bash
+npm install
+```
 
-Bash
+### 3️⃣ Configurar Firebase
 
-flutterfire configure
-🚀 Como Executar o Projeto Localmente
-✅ Pré-requisitos
-Flutter instalado (versão estável)
+Crie um arquivo:
 
-Android Studio ou VS Code
+```bash
+src/services/firebase.ts
+```
 
-SDK do Android configurado
+E adicione suas credenciais:
 
-Emulador ou dispositivo físico
+```ts
+import { initializeApp } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
 
-Verifique a instalação:
+const firebaseConfig = {
+  apiKey: "SUA_API_KEY",
+  authDomain: "SEU_DOMINIO",
+  projectId: "SEU_PROJECT_ID",
+  storageBucket: "SEU_BUCKET",
+  messagingSenderId: "SEU_ID",
+  appId: "SEU_APP_ID",
+};
 
-Bash
+const app = initializeApp(firebaseConfig);
+export const auth = getAuth(app); 
+export const db = getFirestore(app);
+```
 
-flutter doctor
-▶️ Rodar o projeto
-Bash
+### 4️⃣ Rodar o projeto
 
-flutter pub get
-flutter run
-📦 Como Gerar o APK para Android
-🔹 1. Limpar o projeto (opcional, mas recomendado)
-Bash
+```bash
+npm run dev
+```
 
-flutter clean
-flutter pub get
-🔹 2. Gerar APK de Release
-Bash
+Acesse:
 
-flutter build apk --release
-🔹 3. Local do APK Gerado
-Após o build, o APK estará disponível em: build/app/outputs/flutter-apk/app-release.apk
+```
+http://localhost:5173
+```
 
-🛠️ Gerar APK com ABI separada (opcional)
-Reduz o tamanho do APK:
+---
 
-Bash
+## 🌍 Deploy
 
-flutter build apk --split-per-abi
-🧪 Testes
-Para rodar os testes automatizados:
+O projeto foi buildado e publicado na **Vercel**.
 
-Bash
+🔗 **Link:** [https://desafio-flugo-uskz.vercel.app/](https://SEU-LINK-DO-VERCEL-AQUI)
 
-flutter test
-📌 Observações Importantes
-Certifique-se de que o Firebase esteja corretamente configurado antes do build.
+---
 
-Para publicar na Play Store, será necessário gerar um App Bundle (.aab): flutter build appbundle
+## 🧪 Testes Manuais Sugeridos
 
-👨‍💻 Autor
-Luiz Filipe
-Engenheiro de Software | Flutter | Mobile | Web
+### 🔐 Autenticação
+- Acessar rota protegida sem estar logado → redireciona para login
+- Criar conta com e-mail inválido → erro exibido
+- Criar conta com campos vazios → botão desabilitado
+- Login com credenciais inválidas → mensagem de erro
+- Login válido → redirecionamento para tela de colaboradores
+- Logout → token removido do `localStorage` e redirecionamento para login
 
-📄 Licença
-Este projeto é de uso livre para fins educacionais e avaliativos.
+---
 
+### 👥 Colaboradores
+- Criar colaborador sem e-mail → botão **Concluir** desabilitado
+- Criar colaborador com e-mail inválido → erro visual
+- Criar colaborador sem nome → botão desabilitado
+- Criar colaborador válido → redirecionamento automático
+- Editar colaborador existente → dados pré-carregados
+- Alterar status para **Inativo** → colaborador não aparece em seleções
+- Exclusão lógica (ativo = false) → colaborador não removido do banco
+- Transferir colaborador para outro departamento
+- Garantir regra: colaborador **nunca fica sem departamento**
+- Alterar nível hierárquico (colaborador ↔ gestor)
 
+---
+
+### 🏢 Departamentos
+- Criar departamento sem nome → botão desabilitado
+- Criar departamento sem gestor → botão desabilitado
+- Criar departamento válido → redirecionamento automático
+- Editar departamento → dados pré-carregados
+- Adicionar colaborador existente ao departamento
+- Visualizar lista de colaboradores do departamento
+- Transferir colaborador para outro departamento via modal
+- Verificar sincronização:
+  - Departamento → lista de colaboradores
+  - Colaborador → departamento atualizado
+- Garantir que gestor seja sempre um colaborador válido
+
+---
+
+### 🧭 Navegação & UI
+- Expandir e recolher menus da sidebar
+- Navegar entre telas sem perder estado
+- Verificar destaque correto do menu ativo
+- Testar botões desabilitados quando formulário inválido
+- Validar feedback visual de loading
+- Conferir Snackbars de sucesso e erro
+- Acessar rota inexistente → tela **Not Found**
+
+---
+
+### 📊 Listagens
+- Ordenar lista de colaboradores por:
+  - Nome
+  - E-mail
+  - Status
+- Listar apenas colaboradores ativos nos selects
+- Conferir atualização imediata após salvar/editar
+
+---
+
+## 📌 Próximas Melhorias (Roadmap)
+
+* 🔐 Autenticação (Firebase Auth)
+* 👤 Perfis e permissões
+* 🔍 Busca e filtros avançados
+* 📊 Dashboard com métricas
+* 📱 Responsividade mobile
+
+---
+
+## 👨‍💻 Autor
+
+**Luiz Filipe**
+Desenvolvedor Frontend & Software Engineer
+
+📎 LinkedIn: [https://linkedin.com/in/luizfilipemkato](https://linkedin.com/in/luizfilipemkato)
+📎 GitHub: [https://github.com/Luiz-Filipee](https://github.com/Luiz-Filipee)
+
+---
+
+⭐ Se esse projeto te ajudou ou inspirou, deixe uma estrela no repositório!
