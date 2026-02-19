@@ -25,10 +25,16 @@ class _LoginPageState extends State<LoginPage> {
           emailController.text.trim(),
           passwordController.text.trim(),
         );
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Login realizado com sucesso!')),
+        );
       } else {
         await _auth.register(
           emailController.text.trim(),
           passwordController.text.trim(),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Conta criada com sucesso. Faça Login!')),
         );
       }
     } catch (e) {
@@ -110,13 +116,13 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ),
                             child: loading
-                                ? const CircularProgressIndicator(
-                                    color: Colors.white,
-                                  )
-                                : Text(
-                                    isLogin ? 'Entrar' : 'Cadastrar',
-                                    style: const TextStyle(fontSize: 16),
-                                  ),
+                              ? const CircularProgressIndicator(
+                                  color: Colors.white,
+                                )
+                              : Text(
+                                isLogin ? 'Entrar' : 'Cadastrar',
+                                style: const TextStyle(fontSize: 16),
+                              ),
                           ),
                         ),
 
@@ -128,8 +134,8 @@ class _LoginPageState extends State<LoginPage> {
                           },
                           child: Text(
                             isLogin
-                                ? 'Não tem conta? Cadastre-se'
-                                : 'Já tem conta? Entrar',
+                              ? 'Não tem conta? Cadastre-se'
+                              : 'Já tem conta? Entrar',
                             style: const TextStyle(
                               color: Color(0xFF27AE60),
                             ),
