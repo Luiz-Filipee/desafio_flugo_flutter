@@ -1,245 +1,227 @@
-# 💬 Desafio Chat Flutter
+💬 Desafio Chat Flutter
 
-![Flutter](https://img.shields.io/badge/Flutter-%2302569B.svg?style=for-the-badge&logo=Flutter&logoColor=white)
-![Firebase](https://img.shields.io/badge/Firebase-039BE5?style=for-the-badge&logo=Firebase&logoColor=white)
-![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS%20%7C%20Web%20%7C%20Desktop-blue)
 
-Aplicação robusta desenvolvida em **Flutter** com foco em autenticação segura e comunicação em tempo real. O projeto segue padrões de arquitetura limpa, garantindo escalabilidade e facilidade de manutenção em múltiplas plataformas.
 
----
+Aplicação de chat em tempo real desenvolvida em Flutter, com autenticação segura e integração completa com Firebase.
+O projeto segue princípios de arquitetura limpa, visando organização, escalabilidade e manutenção facilitada em múltiplas plataformas.
 
-## 📱 Funcionalidades
+📖 Descrição
+Este projeto implementa uma aplicação multiplataforma de chat com autenticação por e-mail e senha e comunicação em tempo real utilizando serviços do Firebase.
+A estrutura foi organizada em camadas (Models, Pages e Services), separando responsabilidades de dados, interface e lógica de negócio.
 
-- 🔐 Autenticação de usuários
-  - Login com e-mail e senha
-  - Controle de sessão autenticada
-- 💬 Chat em tempo real
-  - Envio e recebimento de mensagens
-  - Modelo de mensagens estruturado
-- 🔥 Integração com Firebase
-  - Firebase Auth
-  - Firebase Core
-- 🧱 Arquitetura organizada
-  - Separação por camadas (pages, models, services)
-- 🌍 Multiplataforma
-  - Android, iOS, Web, Windows, Linux e macOS
+🎯 Objetivo do Desafio
+Construir uma aplicação de chat funcional, escalável e organizada, demonstrando:
 
-## 📁 Estrutura do Projeto
 
-```bash
+Integração com serviços de backend em tempo real
+
+
+Autenticação segura de usuários
+
+
+Estruturação em camadas inspirada em Clean Architecture
+
+
+Suporte multiplataforma com Flutter
+
+
+
+🧰 Tecnologias Utilizadas
+
+
+Flutter
+
+
+Firebase Authentication
+
+
+Cloud Firestore
+
+
+Dart
+
+
+
+🏗️ Arquitetura / Estrutura de Pastas
+O projeto adota separação clara de responsabilidades inspirada em Clean Architecture:
 desafio_chat_flutter/
-├── android/                    # Configurações específicas do Android
-├── ios/                        # Configurações específicas do iOS
-├── web/                        # Build e suporte para Web
-├── windows/                    # Build para Windows
-├── linux/                      # Build para Linux
-├── macos/                      # Build para macOS
-├── assets/
-│   └── imagens/                # Imagens e recursos visuais
+├── assets/imagens/          # Recursos visuais (logos, ícones)
 ├── lib/
-│   ├── models/                 # Modelos de dados
+│   ├── models/              # Modelos de dados (Data Classes)
 │   │   └── message_model.dart
-│   ├── pages/                  # Telas da aplicação
-│   │   ├── chat/
-│   │   │   └── chat_page.dart
-│   │   └── login/
-│   │       └── login_page.dart
-│   ├── services/               # Serviços e regras de negócio
+│   ├── pages/               # Interface do Usuário (UI)
+│   │   ├── chat/            # ChatPage e widgets relacionados
+│   │   └── login/           # LoginPage e lógica de entrada
+│   ├── services/            # Regras de negócio e integração Firebase
 │   │   ├── auth_service.dart
 │   │   └── chat_service.dart
-│   ├── firebase_options.dart   # Configurações do Firebase
-│   └── main.dart               # Arquivo principal da aplicação
-├── test/                       # Testes automatizados
-├── .gitignore
-├── .metadata
-├── analysis_options.yaml       # Regras de análise de código
-├── flutter_plugins_dependencies
-└── pubspec.yaml                # Dependências e configurações do Flutter
-```
+│   ├── firebase_options.dart # Configurações auto-geradas do Firebase
+│   └── main.dart            # Inicialização da aplicação
+├── test/                    # Suite de testes automatizados
+└── pubspec.yaml             # Gestão de dependências
 
----
+Camadas
+Models
+Representação dos dados da aplicação.
+message_model.dart define a estrutura das mensagens e facilita serialização/deserialização com o backend.
+Pages (UI)
+Camada de apresentação responsável pela interação com o usuário.
 
-## 🧠 Organização da Arquitetura
 
-* Banco: **Firestore**
-* Coleção: `colaboradores`
+Login Page
 
-### Estrutura do documento
 
-```ts
-{
-  nome: string;
-  email: string;
-  departamento: string;
-  ativo: boolean;
-  criadoEm: Timestamp;
-}
-```
+Validação de credenciais
 
-* Banco: **Firestore**
-* Coleção: `departamentos`
 
-### Estrutura do documento
+Autenticação do usuário
 
-```ts
-{
-  id?: string;
-  nome: string;
-  gestorId: string;
-  gestorNome: string;
-  colaboradores: string[];
-  ativo: boolean;
-}
-```
 
----
+Persistência de sessão
 
-## ▶️ Como Rodar o Projeto Localmente
 
-### 1️⃣ Clonar o repositório
 
-```bash
-git clone https://github.com/seu-usuario/flugo.git
-cd flugo
-```
 
-### 2️⃣ Instalar dependências
+Chat Page
 
-```bash
-npm install
-```
 
-### 3️⃣ Configurar Firebase
+Interface de mensagens em tempo real
 
-Crie um arquivo:
 
-```bash
-src/services/firebase.ts
-```
+Listagem dinâmica de mensagens
 
-E adicione suas credenciais:
 
-```ts
-import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
+Envio de mensagens
 
-const firebaseConfig = {
-  apiKey: "SUA_API_KEY",
-  authDomain: "SEU_DOMINIO",
-  projectId: "SEU_PROJECT_ID",
-  storageBucket: "SEU_BUCKET",
-  messagingSenderId: "SEU_ID",
-  appId: "SEU_APP_ID",
-};
 
-const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app); 
-export const db = getFirestore(app);
-```
 
-### 4️⃣ Rodar o projeto
 
-```bash
-npm run dev
-```
+Services
+Camada central de lógica de negócio e integração externa.
 
-Acesse:
 
-```
-http://localhost:5173
-```
+Auth Service
 
----
 
-## 🌍 Deploy
+Abstração da autenticação Firebase
 
-O projeto foi buildado e publicado na **Vercel**.
 
-🔗 **Link:** [https://desafio-flugo-uskz.vercel.app/](https://SEU-LINK-DO-VERCEL-AQUI)
+Login e logout
 
----
 
-## 🧪 Testes Manuais Sugeridos
+Gerenciamento de sessão
 
-### 🔐 Autenticação
-- Acessar rota protegida sem estar logado → redireciona para login
-- Criar conta com e-mail inválido → erro exibido
-- Criar conta com campos vazios → botão desabilitado
-- Login com credenciais inválidas → mensagem de erro
-- Login válido → redirecionamento para tela de colaboradores
-- Logout → token removido do `localStorage` e redirecionamento para login
 
----
 
-### 👥 Colaboradores
-- Criar colaborador sem e-mail → botão **Concluir** desabilitado
-- Criar colaborador com e-mail inválido → erro visual
-- Criar colaborador sem nome → botão desabilitado
-- Criar colaborador válido → redirecionamento automático
-- Editar colaborador existente → dados pré-carregados
-- Alterar status para **Inativo** → colaborador não aparece em seleções
-- Exclusão lógica (ativo = false) → colaborador não removido do banco
-- Transferir colaborador para outro departamento
-- Garantir regra: colaborador **nunca fica sem departamento**
-- Alterar nível hierárquico (colaborador ↔ gestor)
 
----
+Chat Service
 
-### 🏢 Departamentos
-- Criar departamento sem nome → botão desabilitado
-- Criar departamento sem gestor → botão desabilitado
-- Criar departamento válido → redirecionamento automático
-- Editar departamento → dados pré-carregados
-- Adicionar colaborador existente ao departamento
-- Visualizar lista de colaboradores do departamento
-- Transferir colaborador para outro departamento via modal
-- Verificar sincronização:
-  - Departamento → lista de colaboradores
-  - Colaborador → departamento atualizado
-- Garantir que gestor seja sempre um colaborador válido
 
----
+Comunicação com Cloud Firestore
 
-### 🧭 Navegação & UI
-- Expandir e recolher menus da sidebar
-- Navegar entre telas sem perder estado
-- Verificar destaque correto do menu ativo
-- Testar botões desabilitados quando formulário inválido
-- Validar feedback visual de loading
-- Conferir Snackbars de sucesso e erro
-- Acessar rota inexistente → tela **Not Found**
 
----
+Streams de mensagens em tempo real
 
-### 📊 Listagens
-- Ordenar lista de colaboradores por:
-  - Nome
-  - E-mail
-  - Status
-- Listar apenas colaboradores ativos nos selects
-- Conferir atualização imediata após salvar/editar
 
----
+Envio e recebimento de mensagens
 
-## 📌 Próximas Melhorias (Roadmap)
 
-* 🔐 Autenticação (Firebase Auth)
-* 👤 Perfis e permissões
-* 🔍 Busca e filtros avançados
-* 📊 Dashboard com métricas
-* 📱 Responsividade mobile
 
----
 
-## 👨‍💻 Autor
 
-**Luiz Filipe**
-Desenvolvedor Frontend & Software Engineer
+▶️ Como Executar o Projeto
+Pré-requisitos
 
-📎 LinkedIn: [https://linkedin.com/in/luizfilipemkato](https://linkedin.com/in/luizfilipemkato)
-📎 GitHub: [https://github.com/Luiz-Filipee](https://github.com/Luiz-Filipee)
 
----
+Flutter SDK (versão estável)
 
-⭐ Se esse projeto te ajudou ou inspirou, deixe uma estrela no repositório!
+
+Android Studio ou VS Code
+
+
+SDK Android/iOS configurado
+
+
+Conta Firebase ativa
+
+
+Configuração do Firebase
+
+
+Criar um projeto no Firebase Console
+
+
+Adicionar aplicativo (Android / iOS / Web)
+
+
+Baixar o arquivo google-services.json
+
+
+Colocar em:
+
+
+android/app/google-services.json
+
+
+
+Gerar configurações globais do Firebase:
+
+
+flutterfire configure
+
+Execução local
+flutter pub get
+flutter run
+
+Build Android
+ObjetivoComandoLimpar buildflutter cleanGerar APK releaseflutter build apk --releaseAPK por ABIflutter build apk --split-per-abiApp Bundle (Play Store)flutter build appbundle
+Local do APK gerado
+build/app/outputs/flutter-apk/app-release.apk
+
+
+🧪 Como Executar os Testes
+Execução da suíte de testes automatizados:
+flutter test
+
+
+⚙️ Decisões Técnicas
+
+
+Arquitetura em camadas inspirada em Clean Architecture para separação de responsabilidades
+
+
+Firebase como backend serverless para autenticação e tempo real
+
+
+Streams do Firestore para atualização automática de mensagens
+
+
+Organização modular por feature (login/chat) dentro da camada de UI
+
+
+
+🚀 Possíveis Melhorias
+
+
+Implementação de gerenciamento de estado dedicado (ex.: Provider, Riverpod, Bloc)
+
+
+Suporte a anexos e mídia no chat
+
+
+Testes de integração e testes de widget
+
+
+Tratamento avançado de erros e estados de rede
+
+
+Internacionalização (i18n)
+
+
+
+👨‍💻 Autor
+Luiz Filipe
+Engenheiro de Software
+
+📄 Licença
+Este projeto é disponibilizado para fins educacionais e avaliativos.
